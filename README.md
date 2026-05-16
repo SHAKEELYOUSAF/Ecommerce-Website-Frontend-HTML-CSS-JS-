@@ -80,7 +80,6 @@ SoleStride/
 ## 🎨 Features
 
 - ✅ Responsive design (works on mobile, tablet, desktop)
-- ✅ Search functionality
 - ✅ Product image gallery
 - ✅ Size selection
 - ✅ Quantity picker
