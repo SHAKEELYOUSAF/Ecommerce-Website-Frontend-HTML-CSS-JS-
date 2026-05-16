@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home | SoleStride</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+<div class="navbar">
+    <div class="logo">Sole<span>Stride</span></div>
+    <div class="search-bar">
+        <input type="text" id="globalSearch" placeholder="Search for shoes...">
+        <button id="searchBtn"><i class="fa fa-search"></i></button>
+    </div>
+    <div class="hamburger" id="hamburger">
+        <span></span><span></span><span></span>
+    </div>
+    <div class="nav-links" id="navLinks">
+        <a href="index.html" class="active">Home</a>
+        <a href="shop.html">Shop</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="javascript:void(0)" class="cart-icon" onclick="openCart()">
+            <i class="fa fa-shopping-cart"></i>
+            <span class="cart-count" id="cartCount">0</span>
+        </a>
+    </div>
+</div>
+
+<div class="hero">
+    <div class="hero-text">
+        <h1>Step into <span style="color:#95AF85;">Comfort & Style</span></h1>
+        <p>Latest Collection - Up to 30% Off</p>
+        <div class="hero-buttons">
+            <button class="btn-primary" onclick="window.location.href='shop.html?category=men'">Shop Men</button>
+            <button class="btn-secondary" onclick="window.location.href='shop.html?category=women'">Shop Women</button>
+        </div>
+    </div>
+    <div class="hero-image">
+        <img src="hero_section_img.png" alt="Hero Shoes">
+    </div>
+</div>
+
+<div class="category_container">
+    <h2>Shop by Category</h2>
+    <div class="category-grid">
+        <div class="category-card" onclick="window.location.href='shop.html?category=men'">
+            <img src="https://servis.pk/cdn/shop/files/M-SR-0300169_BLK_ai.jpg?v=1772430193&width=600" alt="Men">
+            <h3>Men</h3>
+        </div>
+        <div class="category-card" onclick="window.location.href='shop.html?category=women'">
+            <img src="https://servis.pk/cdn/shop/files/L-EK-0201117_CHOCOLATE_ai.jpg?v=1772088791&width=533" alt="Women">
+            <h3>Women</h3>
+        </div>
+        <div class="category-card" onclick="window.location.href='shop.html?category=kids'">
+            <img src="https://servis.pk/cdn/shop/files/02_7db8b942-47a4-4844-b091-6137267c42a1.jpg?v=1756668315&width=600" alt="Kids">
+            <h3>Kids</h3>
+        </div>
+    </div>
+</div>
+  <div class="slider-container">
+                <div class="slider">
+                    <!-- Add your shoe images here -->
+                    <img src="https://servis.pk/cdn/shop/files/Desktop.jpg_8.jpg" alt="Shoe 1" class="slide">
+                    <img src="https://servis.pk/cdn/shop/files/05-desktop_jpg.jpg" alt="Shoe 2" class="slide">
+                    <img src="https://servis.pk/cdn/shop/files/04-desktop_jpg.jpg" alt="Shoe 3" class="slide">
+                    <img src="https://servis.pk/cdn/shop/files/04.jpg_2.jpg" alt="Shoe 3" class="slide">
+                    <img src="https://servis.pk/cdn/shop/files/02-desktop_jpg.jpg" alt="Shoe 3" class="slide">
+
+                </div>
+
+            </div>
+<div class="featured">
+    <h2>Special <span style="color:#95af8b">Offers</span></h2>
+    <div style="text-align: center">
+        <button class="offer_filter" onclick="filterHomeProducts('all')">All</button>
+        <button class="offer_filter" onclick="filterHomeProducts('men')">Men</button>
+        <button class="offer_filter" onclick="filterHomeProducts('women')">Women</button>
+        <button class="offer_filter" onclick="filterHomeProducts('kids')">Kids</button>
+    </div>
+    <div class="product-grid" id="homeProductsGrid"></div>
+</div>
+
+<footer class="main-footer">
+    <div class="footer-grid">
+        <div class="footer-col">
+            <h3>SoleStride</h3>
+            <p>Redefining your walk with premium quality footwear.</p>
+        </div>
+        <div class="footer-col">
+            <h3>Quick Links</h3>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="shop.html">Shop</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h3>Contact</h3>
+            <p><i class="fa fa-envelope"></i> info@solestride.com</p>
+            <p><i class="fa fa-phone"></i> +92 327 1234567</p>
+        </div>
+        <div class="footer-col">
+            <h3>Follow Us</h3>
+            <div class="social-icons">
+                <a href="#"><i class="fa fa-facebook"></i></a>
+                <a href="#"><i class="fa fa-instagram"></i></a>
+                <a href="#"><i class="fa fa-twitter"></i></a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Cart Sidebar -->
+<div class="overlay" id="overlay" onclick="closeCart()"></div>
+<div class="cart-sidebar" id="cartSidebar">
+    <div class="cart-header">
+        <h3><i class="fa fa-shopping-cart"></i> Your Cart</h3>
+        <button class="close-cart" onclick="closeCart()">&times;</button>
+    </div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-footer">
+        <div class="cart-total">Total: PKR <span id="cartTotal">0</span>/-</div>
+        <button class="checkout-btn" onclick="goToCheckout()">Proceed to Checkout</button>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="data.js"></script>
+<script src="main.js"></script>
+
+<script>
+    function renderProductGrid(containerId, productList, isHomePage = false) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    productList.forEach(product => {
+        let finalPrice = product.price;
+        if (product.hasDiscount && product.discountText) {
+            const disc = parseInt(product.discountText);
+            if (!isNaN(disc)) finalPrice = product.price - (product.price * disc / 100);
+        }
+        
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.innerHTML = `
+            <img src="${product.images ? product.images[0] : product.image}" alt="${product.name}">
+            <h4>${product.name} ${product.hasDiscount ? `<span class="discount">${product.discountText}</span>` : ''}</h4>
+            <div class="price">PKR ${Math.floor(finalPrice)}/-</div>
+            <button class="add-to-cart-btn" data-id="${product.id}">Add to Cart</button>
+        `;
+        
+        const addBtn = card.querySelector('.add-to-cart-btn');
+        addBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            addToCart(product);
+        });
+        
+        card.addEventListener('click', () => {
+            window.location.href = `pdp.html?id=${product.id}`;
+        });
+        
+        container.appendChild(card);
+    });
+}
+    // Home page specific filter
+    function filterHomeProducts(category) {
+        let filtered = products.filter(p => p.hasDiscount === true);
+        if (category !== 'all') {
+            filtered = filtered.filter(p => p.category === category);
+        }
+        renderProductGrid('homeProductsGrid', filtered, true);
+    }
+       let slideIndex = 0;
+const slider = document.querySelector(".slider");
+const slides = document.querySelectorAll(".slide");
+
+function updateSlider() {
+    const totalSlides = slides.length;
+
+
+    if (slideIndex >= totalSlides) slideIndex = 0;
+    if (slideIndex < 0) slideIndex = totalSlides - 1;
+
+    const offset = -slideIndex * 100; 
+    slider.style.transform = `translateX(${offset}%)`;
+}
+
+function moveSlide(step) {
+    slideIndex += step;
+    updateSlider();
+}
+
+function goToSlide(index) {
+    slideIndex = index;
+    updateSlider();
+}
+
+// auto play
+let autoSlide = setInterval(() => {
+    moveSlide(1);
+}, 3000);
+
+
+document.querySelector(".slider-container").addEventListener("mouseenter", () => {
+    clearInterval(autoSlide);
+});
+
+document.querySelector(".slider-container").addEventListener("mouseleave", () => {
+    autoSlide = setInterval(() => moveSlide(1), 1000);
+});
+
+// init
+updateSlider();
+</script>
+
+</body>
+</html>

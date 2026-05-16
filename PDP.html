@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details | SoleStride</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+   <link rel="stylesheet" href="PDP.css">
+</head>
+<body>
+
+<div class="navbar">
+    <div class="logo">Sole<span>Stride</span></div>
+    <div class="search-bar">
+        <input type="text" id="globalSearch" placeholder="Search for shoes...">
+        <button id="searchBtn"><i class="fa fa-search"></i></button>
+    </div>
+    <div class="hamburger" id="hamburger">
+        <span></span><span></span><span></span>
+    </div>
+    <div class="nav-links" id="navLinks">
+        <a href="index.html">Home</a>
+        <a href="shop.html">Shop</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="javascript:void(0)" class="cart-icon" onclick="openCart()">
+            <i class="fa fa-shopping-cart"></i>
+            <span class="cart-count" id="cartCount">0</span>
+        </a>
+    </div>
+</div>
+
+<div class="breadcrumb">
+    <a href="index.html">Home</a> / <a href="shop.html">Shop</a> / <span id="breadcrumbProduct">Product</span>
+</div>
+
+<div class="pdp-container">
+    <div id="pdpContent">
+        <!-- Product content will be loaded dynamically -->
+        <div style="text-align: center; padding: 60px;">
+            <i class="fa fa-spinner fa-spin" style="font-size: 3rem; color: #95af8b;"></i>
+            <p>Loading product details...</p>
+        </div>
+    </div>
+</div>
+
+<footer class="main-footer">
+    <div class="footer-grid">
+        <div class="footer-col">
+            <h3>SoleStride</h3>
+            <p>Redefining your walk with premium quality footwear.</p>
+        </div>
+        <div class="footer-col">
+            <h3>Quick Links</h3>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="shop.html">Shop</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h3>Help</h3>
+            <ul>
+                <li><a href="guidance.html">Size Guide</a></li>
+                <li><a href="privacy.html">Privacy Policy</a></li>
+                <li><a href="#">Shipping Info</a></li>
+            </ul>
+        </div>
+    </div>
+</footer>
+
+<!-- Cart Sidebar -->
+<div class="overlay" id="overlay" onclick="closeCart()"></div>
+<div class="cart-sidebar" id="cartSidebar">
+    <div class="cart-header">
+        <h3><i class="fa fa-shopping-cart"></i> Your Cart</h3>
+        <button class="close-cart" onclick="closeCart()">&times;</button>
+    </div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-footer">
+        <div class="cart-total">Total: PKR <span id="cartTotal">0</span>/-</div>
+        <button class="checkout-btn" onclick="goToCheckout()">Proceed to Checkout</button>
+    </div>
+</div>
+
+<script src="data.js"></script>
+<script src="main.js"></script>
+
+<script>
+    // Get product ID from URL
+    function getProductIdFromUrl() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return parseInt(urlParams.get('id'));
+    }
+
+    // Render PDP
+    function renderPDP() {
+        const pdpContent = document.getElementById('pdpContent');
+        const productId = getProductIdFromUrl();
+        const product = products.find(p => p.id === productId);
+        
+        if (!product) {
+            pdpContent.innerHTML = `
+                <div style="text-align: center; padding: 60px; background: white; border-radius: 24px;">
+                    <i class="fa fa-search" style="font-size: 4rem; color: #95af8b;"></i>
+                    <h2 style="margin: 1rem 0;">Product Not Found!</h2>
+                    <p>The product you're looking for doesn't exist.</p>
+                    <a href="shop.html" style="display: inline-block; margin-top: 1rem; padding: 12px 24px; background: #95af8b; color: white; text-decoration: none; border-radius: 40px;">← Back to Shop</a>
+                </div>
+            `;
+            return;
+        }
+
+        // Update breadcrumb
+        document.getElementById('breadcrumbProduct').textContent = product.name;
+
+        // Calculate discounted price
+        let finalPrice = product.price;
+        let discountPercent = 0;
+        if (product.hasDiscount && product.discountText) {
+            discountPercent = parseInt(product.discountText);
+            if (!isNaN(discountPercent)) {
+                finalPrice = product.price - (product.price * discountPercent / 100);
+            }
+        }
+
+        // Create rating stars
+        const fullStars = Math.floor(product.rating);
+        let starsHTML = '';
+        for (let i = 1; i <= 5; i++) {
+            if (i <= fullStars) {
+                starsHTML += '<i class="fa fa-star"></i>';
+            } else if (i === fullStars + 1 && product.rating % 1 >= 0.5) {
+                starsHTML += '<i class="fa fa-star-half-o"></i>';
+            } else {
+                starsHTML += '<i class="fa fa-star-o"></i>';
+            }
+        }
+
+        // Create size options
+        const sizeOptions = product.size.map(size => 
+            `<div class="size-option" data-size="${size}">${size}</div>`
+        ).join('');
+
+        // Create thumbnails
+        const thumbnails = product.images.map((img, index) => 
+            `<img src="${img}" alt="Thumbnail" class="thumbnail ${index === 0 ? 'active' : ''}" data-index="${index}">`
+        ).join('');
+
+        const html = `
+            <div class="product-detail">
+                <div class="product-gallery">
+                    <img src="${product.images[0]}" alt="${product.name}" class="main-image" id="mainImage">
+                    <div class="thumbnail-grid" id="thumbnailGrid">
+                        ${thumbnails}
+                    </div>
+                </div>
+                <div class="product-info-pdp">
+                    <div class="product-category">${product.category.toUpperCase()} / ${product.type.toUpperCase()}</div>
+                    <h1 class="product-name-pdp">${product.name}</h1>
+                    <div class="product-rating">
+                        <div class="stars">${starsHTML}</div>
+                        <span class="rating-count">(${product.rating} out of 5)</span>
+                    </div>
+                    <div class="product-description-pdp">
+                        <p>${product.description || 'Premium quality footwear designed for comfort and style. Made with high-quality materials for durability and all-day wear.'}</p>
+                    </div>
+                    <div class="price-section">
+                        ${product.hasDiscount ? `<span class="original-price">PKR ${product.price.toLocaleString()}/-</span>` : ''}
+                        <span class="current-price">PKR ${Math.floor(finalPrice).toLocaleString()}/-</span>
+                        ${product.hasDiscount ? `<span class="discount-badge">${product.discountText} OFF</span>` : ''}
+                    </div>
+                    <div class="size-section">
+                        <div class="size-title">Select Size <span style="color: red;">*</span></div>
+                        <div class="size-options" id="sizeOptions">
+                            ${sizeOptions}
+                        </div>
+                    </div>
+                    <div class="quantity-section">
+                        <div class="quantity-title">Quantity</div>
+                        <div class="quantity-selector">
+                            <button class="qty-btn" id="decrementQty">-</button>
+                            <span class="quantity-value" id="quantityValue">1</span>
+                            <button class="qty-btn" id="incrementQty">+</button>
+                        </div>
+                    </div>
+                    <button class="add-to-cart-pdp" id="addToCartBtn">
+                        <i class="fa fa-shopping-cart"></i> Add to Cart
+                    </button>
+                    <button class="buy-now-btn" id="buyNowBtn">
+                        <i class="fa fa-bolt"></i> Buy Now
+                    </button>
+                </div>
+            </div>
+            <div class="features-section">
+                <div class="feature">
+                    <i class="fa fa-truck"></i>
+                    <h4>Free Shipping</h4>
+                    <p>On orders over PKR 5000</p>
+                </div>
+                <div class="feature">
+                    <i class="fa fa-exchange"></i>
+                    <h4>Easy Returns</h4>
+                    <p>30 days return policy</p>
+                </div>
+                <div class="feature">
+                    <i class="fa fa-lock"></i>
+                    <h4>Secure Payment</h4>
+                    <p>100% secure transactions</p>
+                </div>
+                <div class="feature">
+                    <i class="fa fa-certificate"></i>
+                    <h4>Premium Quality</h4>
+                    <p>Best materials used</p>
+                </div>
+            </div>
+            <div class="related-section">
+                <h3>You May Also Like</h3>
+                <div class="related-grid" id="relatedGrid"></div>
+            </div>
+        `;
+
+        pdpContent.innerHTML = html;
+
+        // Initialize all features after rendering
+        initializePDPFeatures(product);
+    }
+
+    function initializePDPFeatures(product) {
+        // Size selection
+        let selectedSize = product.size[0];
+        const sizeElements = document.querySelectorAll('.size-option');
+        sizeElements.forEach(el => {
+            if (parseInt(el.getAttribute('data-size')) === selectedSize) {
+                el.classList.add('selected');
+            }
+            el.addEventListener('click', () => {
+                sizeElements.forEach(se => se.classList.remove('selected'));
+                el.classList.add('selected');
+                selectedSize = parseInt(el.getAttribute('data-size'));
+            });
+        });
+
+        // Quantity logic
+        let quantity = 1;
+        const quantityValue = document.getElementById('quantityValue');
+        document.getElementById('decrementQty')?.addEventListener('click', () => {
+            if (quantity > 1) {
+                quantity--;
+                quantityValue.textContent = quantity;
+            }
+        });
+        document.getElementById('incrementQty')?.addEventListener('click', () => {
+            if (quantity < 10) {
+                quantity++;
+                quantityValue.textContent = quantity;
+            }
+        });
+
+        // Add to cart
+        document.getElementById('addToCartBtn')?.addEventListener('click', () => {
+            if (!selectedSize) {
+                showNotification('Please select a size!', true);
+                return;
+            }
+            addToCart(product, selectedSize, quantity);
+        });
+
+        // Buy now
+        document.getElementById('buyNowBtn')?.addEventListener('click', () => {
+            if (!selectedSize) {
+                showNotification('Please select a size!', true);
+                return;
+            }
+            addToCart(product, selectedSize, quantity);
+            setTimeout(() => {
+                window.location.href = 'checkout.html';
+            }, 500);
+        });
+
+        // Image gallery
+        const mainImage = document.getElementById('mainImage');
+        const thumbnails = document.querySelectorAll('.thumbnail');
+        thumbnails.forEach((thumb, index) => {
+            thumb.addEventListener('click', () => {
+                mainImage.src = product.images[index];
+                thumbnails.forEach(t => t.classList.remove('active'));
+                thumb.classList.add('active');
+            });
+        });
+
+        // Image zoom on click
+        mainImage?.addEventListener('click', () => {
+            const modal = document.createElement('div');
+            modal.className = 'image-modal';
+            modal.innerHTML = `
+                <span class="close-modal">&times;</span>
+                <img src="${mainImage.src}" alt="Product" class="modal-img">
+            `;
+            document.body.appendChild(modal);
+            modal.style.display = 'flex';
+            modal.querySelector('.close-modal').onclick = () => modal.remove();
+            modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+        });
+
+        // Render related products (same category, exclude current)
+        renderRelatedProducts(product);
+    }
+
+    function renderRelatedProducts(currentProduct) {
+        const relatedGrid = document.getElementById('relatedGrid');
+        if (!relatedGrid) return;
+        
+        const related = products
+            .filter(p => p.category === currentProduct.category && p.id !== currentProduct.id)
+            .slice(0, 4);
+        
+        if (related.length === 0) {
+            relatedGrid.innerHTML = '<p>No related products found.</p>';
+            return;
+        }
+        
+        relatedGrid.innerHTML = '';
+        related.forEach(prod => {
+            let finalPrice = prod.price;
+            if (prod.hasDiscount && prod.discountText) {
+                const disc = parseInt(prod.discountText);
+                if (!isNaN(disc)) finalPrice = prod.price - (prod.price * disc / 100);
+            }
+            
+            const card = document.createElement('div');
+            card.className = 'related-card';
+            card.innerHTML = `
+                <img src="${prod.images[0]}" alt="${prod.name}">
+                <div class="related-card-info">
+                    <div class="related-card-name">${prod.name}</div>
+                    <div class="related-card-price">PKR ${Math.floor(finalPrice)}/-</div>
+                </div>
+            `;
+            card.addEventListener('click', () => {
+                window.location.href = `pdp.html?id=${prod.id}`;
+            });
+            relatedGrid.appendChild(card);
+        });
+    }
+
+    function showNotification(message, isError = false) {
+        const notification = document.createElement('div');
+        notification.className = 'notification';
+        notification.style.background = isError ? '#f44336' : '#4caf50';
+        notification.innerHTML = `<i class="fa ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'}"></i> ${message}`;
+        document.body.appendChild(notification);
+        setTimeout(() => notification.remove(), 2500);
+    }
+
+    // Hamburger menu
+    document.getElementById('hamburger')?.addEventListener('click', () => {
+        document.getElementById('navLinks').classList.toggle('show');
+    });
+
+    // Search functionality
+    document.getElementById('searchBtn')?.addEventListener('click', () => {
+        const query = document.getElementById('globalSearch').value.toLowerCase();
+        if (query) {
+            window.location.href = `shop.html?search=${encodeURIComponent(query)}`;
+        }
+    });
+
+    document.getElementById('globalSearch')?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const query = e.target.value.toLowerCase();
+            if (query) {
+                window.location.href = `shop.html?search=${encodeURIComponent(query)}`;
+            }
+        }
+    });
+
+    // Initialize PDP on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        updateCartCount();
+        renderPDP();
+    });
+</script>
+</body>
+</html>
